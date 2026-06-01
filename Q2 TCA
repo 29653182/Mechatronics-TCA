@@ -1,0 +1,51 @@
+const int POT_PIN    = A0;
+const int ENABLE_PIN = 3;  
+const int IN1_PIN    = 4;  
+const int IN2_PIN    = 5;  
+
+void setup() {
+  pinMode(ENABLE_PIN, OUTPUT);
+  pinMode(IN1_PIN,    OUTPUT);
+  pinMode(IN2_PIN,    OUTPUT);
+  Serial.begin(9600);
+  Serial.println("DC Motor Ready");
+  Serial.println("Pot left=full reverse | centre=stop | right=full forward");
+}
+
+void loop() {
+  int potValue = analogRead(POT_PIN);
+
+  if (potValue > 532) {
+    // --- FORWARD ---
+    int pwmSpeed = map(potValue, 532, 1023, 0, 255);
+    int speedPct = map(potValue, 532, 1023, 0, 100);
+    digitalWrite(IN1_PIN, HIGH);
+    digitalWrite(IN2_PIN, LOW);
+    analogWrite(ENABLE_PIN, pwmSpeed);
+    Serial.print("FORWARD  ");
+    Serial.print(speedPct);
+    Serial.println("%");
+
+  } else if (potValue < 491) {
+    // --- REVERSE ---
+    int pwmSpeed = map(potValue, 491, 0, 0, 255);
+    int speedPct = map(potValue, 491, 0, 0, 100);
+    digitalWrite(IN1_PIN, LOW);
+    digitalWrite(IN2_PIN, HIGH);
+    analogWrite(ENABLE_PIN, pwmSpeed);
+    Serial.print("REVERSE  ");
+    Serial.print(speedPct);
+    Serial.println("%");
+
+  } else {
+    // --- DEAD ZONE → stop ---
+    analogWrite(ENABLE_PIN, 0);
+    digitalWrite(IN1_PIN, LOW);
+    digitalWrite(IN2_PIN, LOW);
+    Serial.println("STOPPED");
+  }
+
+  delay(100);
+}
+
+
