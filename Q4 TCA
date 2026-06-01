@@ -1,0 +1,68 @@
+const int RED_PIN   = 11;
+const int GREEN_PIN = 9;
+const int BLUE_PIN  = 10;
+
+// How long each colour is shown (ms)
+const int COLOUR_DURATION = 1000;
+
+void setColour(int r, int g, int b) {
+  analogWrite(RED_PIN,   r);
+  analogWrite(GREEN_PIN, g);
+  analogWrite(BLUE_PIN,  b);
+}
+
+void setup() {
+  pinMode(RED_PIN,   OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN,  OUTPUT);
+
+  Serial.begin(9600);
+  Serial.println("Rainbow Colour Display Ready");
+}
+
+void loop() {
+  // Red
+  setColour(255, 0, 0);
+  Serial.println("RED");
+  delay(COLOUR_DURATION);
+
+  // Orange
+  setColour(255, 127, 0);
+  Serial.println("ORANGE");
+  delay(COLOUR_DURATION);
+
+  // Yellow
+  setColour(255, 255, 0);
+  Serial.println("YELLOW");
+  delay(COLOUR_DURATION);
+
+  // Green
+  setColour(0, 255, 0);
+  Serial.println("GREEN");
+  delay(COLOUR_DURATION);
+
+    // Turquoise
+  setColour(0, 206, 209);
+  Serial.println("TURQUOISE");
+  delay(COLOUR_DURATION);
+  
+  // Blue
+  setColour(0, 0, 255);
+  Serial.println("BLUE");
+  delay(COLOUR_DURATION);
+
+  // Indigo
+  setColour(75, 0, 130);
+  Serial.println("INDIGO");
+  delay(COLOUR_DURATION);
+
+  // Violet
+  setColour(148, 0, 211);
+  Serial.println("VIOLET");
+  delay(COLOUR_DURATION);
+  
+    // Pink
+  setColour(255, 20, 147);
+  Serial.println("PINK");
+  delay(COLOUR_DURATION);
+}
