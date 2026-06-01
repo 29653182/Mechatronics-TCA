@@ -32,29 +32,23 @@ void setup() {
 }
 
 void loop() {
-  // Read voltage from pot wiper
   float rawADC  = readAveraged(VOLT_PIN);
   float voltage = (rawADC / 1023.0) * VREF;
 
-  // Calculate current using Ohm's Law (I = V / R)
   float currentMa = (voltage / POT_RESISTANCE) * 1000.0;
 
-  // Calculate power (P = V x I)
   float powerUw = voltage * currentMa * 1000.0;
 
-  // --- LCD Row 1: Voltage ---
   lcd.setCursor(0, 0);
   lcd.print("V: ");
   lcd.print(voltage, 3);
   lcd.print(" V      ");
 
-  // --- LCD Row 2: Current ---
   lcd.setCursor(0, 1);
   lcd.print("I: ");
   lcd.print(currentMa, 3);
   lcd.print(" mA     ");
 
-  // --- Serial Monitor ---
   Serial.print("Voltage: ");
   Serial.print(voltage, 3);
   Serial.print(" V  |  Current: ");
