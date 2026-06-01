@@ -1,1 +1,76 @@
+#include <LiquidCrystal.h>
 
+LiquidCrystal lcd(12, 9, 5, 4, 3, 2);
+
+const int TRIG = 10;
+const int ECHO = 11;
+
+const int CLOSE_THRESHOLD  = 40;   // close warning
+const int FAR_THRESHOLD    = 400;  
+void setup() {
+  lcd.begin(16, 2);
+  pinMode(TRIG, OUTPUT);
+  pinMode(ECHO, INPUT);
+
+  // Splash screen
+  lcd.setCursor(0, 0);
+  lcd.print("  Distance Meter");
+  lcd.setCursor(0, 1);
+  lcd.print("  Initialising..");
+  delay(1500);
+  lcd.clear();
+
+  Serial.begin(9600);
+  Serial.println("Distance Measurement System Ready");
+}
+
+void loop() {
+  long duration;
+  float distanceCm;
+  float distanceInch;
+
+  digitalWrite(TRIG, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG, LOW);
+
+  duration = pulseIn(ECHO, HIGH, 30000);
+
+  // Distance = (duration / 2) * 0.0343
+  distanceCm = (duration / 2.0) * 0.0343;
+  distanceInch = distanceCm / 2.54;
+
+  lcd.setCursor(0, 0);
+  lcd.print("Dist: ");
+
+  if (duration == 0 || distanceCm > FAR_THRESHOLD) {
+    // Out of range
+    lcd.print("Out of range");
+    lcd.setCursor(0, 1);
+    lcd.print("                "); // clear row 2
+    Serial.println("Out of range");
+  } else if (distanceCm < CLOSE_THRESHOLD) {
+    // close warning
+    lcd.print(distanceCm, 1);
+    lcd.print(" cm  ");
+    lcd.setCursor(0, 1);
+    lcd.print("!! TOO CLOSE !! ");
+    Serial.print("WARNING - Distance: ");
+    Serial.print(distanceCm, 1);
+    Serial.println(" cm");
+  } else {
+    // Normal reading – show cm on row 1, inches on row 2
+    lcd.print(distanceCm, 1);
+    lcd.print(" cm   ");
+    lcd.setCursor(0, 1);
+    lcd.print(distanceInch, 1);
+    lcd.print(" in        ");
+    Serial.print("Distance: ");
+    Serial.print(distanceCm, 1);
+    Serial.print(" cm / ");
+    Serial.print(distanceInch, 1);
+    Serial.println(" in");
+  }
+  delay(200); // ~5 readings per second
+}
