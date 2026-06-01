@@ -1,0 +1,67 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 9, 5, 4, 3, 2);
+
+const int VOLT_PIN        = A0;
+const float VREF          = 5.0;
+const float POT_RESISTANCE = 10000;  // 10kΩ potentiometer
+const int NUM_SAMPLES     = 20;
+
+float readAveraged(int pin) {
+  long sum = 0;
+  for (int i = 0; i < NUM_SAMPLES; i++) {
+    sum += analogRead(pin);
+    delay(1);
+  }
+  return (float)sum / NUM_SAMPLES;
+}
+
+void setup() {
+  lcd.begin(16, 2);
+
+  lcd.setCursor(0, 0);
+  lcd.print(" Volt/Amp Meter ");
+  lcd.setCursor(0, 1);
+  lcd.print("  Initialising..");
+  delay(1500);
+  lcd.clear();
+
+  Serial.begin(9600);
+  Serial.println("Digital Voltage/Current Meter Ready");
+  Serial.println("Adjust potentiometer to change reading");
+}
+
+void loop() {
+  // Read voltage from pot wiper
+  float rawADC  = readAveraged(VOLT_PIN);
+  float voltage = (rawADC / 1023.0) * VREF;
+
+  // Calculate current using Ohm's Law (I = V / R)
+  float currentMa = (voltage / POT_RESISTANCE) * 1000.0;
+
+  // Calculate power (P = V x I)
+  float powerUw = voltage * currentMa * 1000.0;
+
+  // --- LCD Row 1: Voltage ---
+  lcd.setCursor(0, 0);
+  lcd.print("V: ");
+  lcd.print(voltage, 3);
+  lcd.print(" V      ");
+
+  // --- LCD Row 2: Current ---
+  lcd.setCursor(0, 1);
+  lcd.print("I: ");
+  lcd.print(currentMa, 3);
+  lcd.print(" mA     ");
+
+  // --- Serial Monitor ---
+  Serial.print("Voltage: ");
+  Serial.print(voltage, 3);
+  Serial.print(" V  |  Current: ");
+  Serial.print(currentMa, 3);
+  Serial.print(" mA  |  Power: ");
+  Serial.print(powerUw, 2);
+  Serial.println(" uW");
+
+  delay(300);
+}
