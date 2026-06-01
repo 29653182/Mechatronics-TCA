@@ -37,8 +37,6 @@ void loop() {
 
   float currentMa = (voltage / POT_RESISTANCE) * 1000.0;
 
-  float powerUw = voltage * currentMa * 1000.0;
-
   lcd.setCursor(0, 0);
   lcd.print("V: ");
   lcd.print(voltage, 3);
@@ -54,8 +52,6 @@ void loop() {
   Serial.print(" V  |  Current: ");
   Serial.print(currentMa, 3);
   Serial.print(" mA  |  Power: ");
-  Serial.print(powerUw, 2);
-  Serial.println(" uW");
 
   delay(300);
 }
